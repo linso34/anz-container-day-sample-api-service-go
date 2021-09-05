@@ -1,15 +1,12 @@
 # This is a multi-stage build. First we are going to compile and then
 # create a small image for runtime.
-FROM bitnami/golang:latest as builder
+FROM golang:1.11.1 as builder
 
 RUN mkdir -p /go/src/github.com/eks-workshop-sample-api-service-go
 WORKDIR /go/src/github.com/eks-workshop-sample-api-service-go
 RUN useradd -u 10001 app
 COPY . .
-RUN go env -w GO111MODULE=auto
-RUN go mod init
-RUN CGO_ENABLED=0 GOOS=linux go build
-#RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
 FROM scratch
 
